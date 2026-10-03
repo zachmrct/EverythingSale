@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+
+
+@font-face {
+    font-family: 'GlamourAbsolute_Regular';
+    src: url('../assets/GlamourAbsolute_Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/**/
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color:  #f4fafd;
+    font-family: 'Lexend', sans-serif;
+}
+
+li, a, button{
+    font-family: 'Lexend', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #212121;
+    text-decoration: none;
+}
+
+input[type="checkbox" i] {
+
+    cursor: pointer;
+}
+
+/*HEADER NAVBAR*/
+header {
+    position: sticky;
+    z-index: 90;
+    top:0;
+    height: 8.5vh;
+
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 5%;
+    padding-right: 8%;
+    padding-block: 20px;
+    border-bottom:  solid 1px  #212121;
+} 
+
+header a {
+    text-transform: uppercase;
+    width: fit-content;
+    text-decoration: none !important;
+}
+
+header > a {
+    /* width: 300px; */
+}
+
+.logo {
+    width: max-content;
+    font-size: 40px;
+    color:#212121;
+    font-family: 'Space Grotesk', sans-serif;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    display: flex;
+    gap: 2%;
+    align-items: center;
+    font-weight: 700;
+}
+
+.logo img {
+    position: relative;
+    width: 15%;
+    bottom: 2px;
+}
+
+.logo:hover {
+    transition: all 0.3s ease 0s;
+}
+
+.logo:hover  {
+    color: #7962d6;
+}
+
+.logo:hover{
+    transform: scale(0.85);
+}
+
+button {
+    padding: 9px 25px;
+    background-color:#7962d6 ;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+}
+
+.rightmost-bar {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+
+#search img, #owner-profile img{
+    height: 30px;
+    transition: transform .2s;
+    padding-top:1%;
+}
+
+#profile img{
+    height:30px;
+    transition: transform .2s;
+}
+
+#login button {
+    font-size: 1rem;
+    color:black;
+}
+
+#search img:hover, #profile img:hover, #login button:hover, #owner-profile img:hover{
+    transform: scale(1.2);
+}
+
+
+/****************BANNER************************/
+.banner {
+    /* width: 100vw; */
+    
+    background-color: #F6F296;
+    text-align: center;
+    padding-block: 0.5%;
+    border-bottom: solid 1px #212121;
+    
+}
+
+.banner * {
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    
+    color: #d45757;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.75rem;
+    letter-spacing: 0.5px;
+    
+    
+}
+
+.banner .violettext{
+    color: #897198;
+}
+
+/*****************FOOTER***********************/
+
+.copyright{
+    font-family: "lexend", sans-serif;
+    color: whitesmoke;
+    width: 100%;
+    background-color:#24262b;
+    text-align: center;
+    padding-block: 1rem;
+    position: fixed;
+    bottom: 0;
+}
+
+.lexend {
+    font-family: 'Lexend', sans-serif;
+}

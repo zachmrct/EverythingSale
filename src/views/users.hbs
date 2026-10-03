@@ -1,0 +1,53 @@
+{{!-- page for all users --}}
+{{> newnavbar}}
+<div class="z-10 bg-white w-full h-full rounded-[45px] px-20">
+    <div class="flex-1 w-full h-full flex flex-col z-10">
+        <!-- Header -->
+        <div class="w-full relative h-[91px] border-b-2 justify-center bg-white border-gray-300 space-x-[10px] flex z-10 rounded-tl-[45px]" id="categoryMenu">
+            <div class="w-screen flex items-center justify-center inter font-[700] text-[25px]">
+                USERS
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="flex flex-col mt-10 space-y-10">
+            <!-- Profile Section -->
+            <div>
+                <h2 class="text-[35px] font-bold mb-5 ">Profile</h2>
+                <div class="flex items-center">
+                    <a id="currUserLink" href="/users/{{user._id}}">
+                        <div class="bg-white shadow-md rounded-[20px] p-5 flex items-center space-x-5 border border-gray-300 hover:scale-110 duration-300">
+                            <img class="w-[50px] h-[50px] bg-gray-300 rounded-full" src="/uploads/users/{{user.profilePicture}}" alt="/uploads/users/default-picture.png" />
+                            <div>
+                                <p class="font-bold text-[16px]">{{user.firstName}} {{user.lastName}}</p>
+                                <p class="text-gray-500 text-[14px]">{{user.email}}</p>
+                                <p class="text-gray-500 text-[14px]">+{{user.number}}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Other Admins Section -->
+            <div>
+                <h2 class="text-[35px] font-bold mb-5">Other Admins</h2>
+                <div class="grid grid-cols-2 gap-5">
+                    <!-- Card 1 -->
+                    {{#each otherUsers}}
+                        <a href="/users/{{this._id}}">
+                            <div class="bg-white shadow-md rounded-[20px] p-5 flex items-center space-x-5 border border-gray-300 hover:scale-105 duration-300">
+                                <img class="w-[50px] h-[50px] bg-gray-300 rounded-full" src="/uploads/users/{{this.profilePicture}}" alt="/uploads/users/default-picture.png" />
+                                <div>
+                                    <p class="font-bold text-[16px]">{{this.firstName}} {{this.lastName}}</p>
+                                    <p class="text-gray-500 text-[14px]">{{this.email}}</p>
+                                    <p class="text-gray-500 text-[14px]">+{{this.number}}</p>
+                                </div>
+                            </div>
+                        </a>
+                    {{/each}}
+                    <!-- Additional cards as needed -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

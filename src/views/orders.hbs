@@ -1,0 +1,1302 @@
+{{> newnavbar}}
+<div class="z-10 bg-white w-full h-full rounded-[45px] px-20">
+    <div class="flex-1 w-full h-full flex flex-col z-10">
+        <!-- Category Menu -->
+        <div class="w-full relative h-[91px] border-b-2 justify-center bg-white border-gray-300 space-x-[10px] flex z-10 rounded-tl-[45px]" id="categoryMenu">
+            <div class="w-screen flex items-center justify-center inter font-[700] text-[25px] a" data-category="All">
+                ORDERS
+            </div>
+        </div>
+
+        <!-- Filter Row -->
+        <div class="flex justify-between items-center w-full mt-4 mb-4 px-2 space-x-2">
+            <select id="statusFilter"class="border rounded-lg px-3 py-1 text-gray-700" onchange="filter()">
+                <option>Status: All</option>
+                <option>Pending</option>
+                <option>Shipped</option>
+                <option>Paid</option>
+                <option>Unpaid</option>
+                <option>Returned</option>
+                <option>Cancelled</option>
+            </select>
+            <select id="dateFilter" class="border rounded-lg px-3 py-1 text-gray-700" onchange="filter()">
+                <option>Date: Today</option>
+                <option>All</option>
+                <option>This Week</option>
+                <option>This Month</option>
+                <option>This Year</option>
+            </select>
+            <select id="amountFilter" class="border rounded-lg px-3 py-1 text-gray-700" onchange="filter()">
+                <option>Amount:</option>
+                <option>0-499</option>
+                <option>500-999</option>
+                <option>1000-1999</option>
+                <option>2000 and above</option>
+            </select>
+            <div class="flex items-center border rounded-lg px-3 py-1">
+                <input id="searchOrder" type="text" placeholder="Quick Search..." class="outline-none text-sm">
+                <button class="hover:bg-gray-300 p-1 rounded-md" onclick="search()">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+            <button id="addOrderButton" class="bg-[#897198] text-white px-3 py-1 rounded-md duration-200 hover:scale-105">
+                New Order
+            </button>
+        </div>
+
+
+        <!-- Orders Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full rounded-md border-t-0 text-center border border-collapse border-t-0 border-transparent">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 bg-transparent border border-black border-l-0 border-r-0"><i class="bi bi-trash3-fill"></i></th>
+                        <th class="py-2 px-4 bg-transparent border border-black border-l-0 border-r-0">#</th>
+                        <th class="py-2 px-4 bg-transparent border border-black border-l-0 border-r-0">Order ID</th>
+                        <th class="py-2 px-4 bg-transparent border border-black border-l-0 border-r-0">Date</th>
+                        <th class="py-2 px-4 bg-transparent border border-black border-l-0 border-r-0">Customer</th>
+                        <th class="py-2 px-4 bg-transparent border border-black border-l-0 border-r-0">Status</th>
+                        <th class="py-2 px-4 bg-transparent border border-black border-l-0 border-r-0">Price</th>
+                        <th class="py-2 px-4 bg-transparent border border-black border-l-0 border-r-0">Edit</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody" class="border border-transparent">
+                    <!-- Rows will be dynamically added here based on the current page -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="flex flex-row-reverse justify-between border border-transparent">
+            <div class="flex justify-center mt-4 space-x-2">
+                <button onclick="previousPage()" class="border rounded-lg px-4 py-2 text-gray-700">Previous</button>
+                <span id="pageInfo" class="px-4 py-2 text-gray-700"></span>
+                <div id="pageNumbers" class="flex space-x-2"></div>
+                <button onclick="nextPage()" class="border rounded-lg px-4 py-2 text-gray-700">Next</button>
+            </div>
+            <!-- Showing Entries Info -->
+            <div id="showingInfo" class="text-center inter mt-4 text-gray-700"></div>
+        </div>
+    </div>
+
+    <!--Add Order Modal-->
+    <div id="addOrderModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div id="orderModal" class="bg-[#F6F296] rounded-lg w-1/3 p-6 relative">
+            <!-- Close button (X) -->
+            <button id="closeAddOrderModal" class="absolute top-3 right-3 text-gray-500 text-xl">
+                <i class="bi bi-x"></i>
+            </button>
+
+            
+            <h2 class="text-2xl font-semibold mb-4">Add New Order</h2>
+
+            <form id="addOrderForm" method="POST" action="/add-order">
+                <!-- 2-column grid layout -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Order ID -->
+                    <div>
+                        <label class="block mb-2">Order ID:</label>
+                        <input id="newOrderId" name="newOrderId" type="text" class="w-full border rounded-lg px-3 py-2 mb-1" placeholder="Enter order ID" readonly>
+                        <span id="error-newOrderId" class="error-message">Order ID is required.</span>
+                    </div>
+
+                    <!-- Customer Name -->
+                    <div>
+                        <label class="block mb-2">Customer Name:</label>
+                        <input id="newOrderName" name="newOrderName" type="text" class="w-full border rounded-lg px-3 py-2 mb-1" placeholder="Enter customer name" required>
+                        <span id="error-newOrderName" class="error-message">Customer name is required.</span>
+                    </div>
+
+                    <!-- Date -->
+                    <div>
+                        <label class="block mb-2">Date:</label>
+                        <input id="newOrderDate" name="newOrderDate" type="date" class="w-full border rounded-lg px-3 py-2 mb-1" required>
+                        <span id="error-newOrderDate" class="error-message">Order date is required.</span>
+                    </div>
+
+                    <!-- Address -->
+                    <div>
+                        <label class="block mb-2">Address:</label>
+                        <input id="newOrderAddress" name="newOrderAddress" type="text" class="w-full border rounded-lg px-3 py-2 mb-1" placeholder="Enter address" required>
+                        <span id="error-newOrderAddress" class="error-message">Address is required.</span>
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+                        <label class="block mb-2">Status:</label>
+                        <select id="newOrderStatus" name="newOrderStatus" class="w-full border rounded-lg px-3 py-2 mb-1" required>
+                            <option value="">Select status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Unpaid">Unpaid</option>
+                            <option value="Returned">Returned</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <span id="error-newOrderStatus" class="error-message">Order status is required.</span>
+                    </div>
+
+                    <!-- Contact No -->
+                    <div>
+                        <label class="block mb-2">Contact No.:</label>
+                        <input id="newOrderContactNumber" name="newOrderContactNumber" type="text" class="w-full border rounded-lg px-3 py-2 mb-1" placeholder="Enter contact number" required>
+                        <span id="error-newOrderContactNumber" class="error-message">Contact number is required.</span>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label class="block mb-2">Email:</label>
+                        <input id="newOrderEmail" name="newOrderEmail" type="email" class="w-full border rounded-lg px-3 py-2 mb-1" placeholder="Enter email" required>
+                        <span id="error-newOrderEmail" class="error-message">A valid email is required.</span>
+                    </div>
+
+                    <!-- Hidden Total Price -->
+                    <input id="totalPrice" name="totalPrice" type="hidden" required>
+
+                    <!-- Search for Items -->
+                    <div>
+                        <label class="block mb-2">Search:</label>
+                        <input id="searchInput" type="text" class="w-full border rounded-lg px-3 py-2 mb-1" placeholder="Search...">
+                    </div>
+                </div>
+
+                <!-- Display Items -->
+                <div id="itemsDisplay" class="w-full border bg-white rounded-lg px-3 py-2 mb-4">
+                    <!-- Item elements will be dynamically added here -->
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end space-x-2 mt-4">
+                    <button id="submitAddOrder" type="submit" class="bg-[#F5B0B0] text-[#F6F296] px-4 py-2 rounded-lg">Place Order</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!--Edit Order Modal-->
+    <div id="editOrderModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-[#F6F296] rounded-lg w-1/3 p-6 relative">
+            <!-- Close button (X) -->
+            <button onclick="closeEditOrderModal()" class="absolute top-3 right-3 text-gray-500 text-xl">
+                <i class="bi bi-x"></i>
+            </button>
+
+            
+            <h2 class="text-2xl font-semibold mb-4">Edit Order</h2>
+
+            <form id="editOrderForm" method="POST" action="/edit-order">
+                <!-- 2-column grid layout -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-2">Order ID:</label>
+                        <input id="editOrderId" name="editOrderId" type="text" class="w-full border rounded-lg px-3 py-2 mb-4" placeholder="" readonly>
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-2">Customer Name:</label>
+                        <input id="editOrderName" name="editOrderName" type="text" class="w-full border rounded-lg px-3 py-2 mb-4" placeholder="Enter customer name">
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-2">Date:</label>
+                        <input id="editOrderDate" name="editOrderDate" type="date" class="w-full border rounded-lg px-3 py-2 mb-4">
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-2">Address:</label>
+                        <input id="editOrderAddress" name="editOrderAddress" type="text" class="w-full border rounded-lg px-3 py-2 mb-4" placeholder="Enter address">
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-2">Status:</label>
+                        <select id="editOrderStatus" name="editOrderStatus" class="w-full border rounded-lg px-3 py-2 mb-4">
+                            <option>Pending</option>
+                            <option>Shipped</option>
+                            <option>Paid</option>
+                            <option>Unpaid</option>
+                            <option>Returned</option>
+                            <option>Cancelled</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-2">Contact No.:</label>
+                        <input id="editOrderContactNumber" name="editOrderContactNumber" type="text" class="w-full border rounded-lg px-3 py-2 mb-4" placeholder="Enter contact number">
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-2">Email:</label>
+                        <input id="editOrderEmail" name="editOrderEmail" type="email" class="w-full border rounded-lg px-3 py-2 mb-4" placeholder="Enter email">
+                    </div>
+
+                    <!-- Total Price (Hidden) -->
+                    <input id="editTotalPrice" name="editTotalPrice" type="hidden">
+                    
+                    <!--Search for Items-->
+                    <div>
+                        <label class="block mb-2">Search:</label>
+                        <input id="editSearchInput" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Search Product...">
+                    </div>
+
+                    
+                </div>
+
+                <!--Display the Items-->
+                <div id="editItemsDisplay" class="w-full border bg-white rounded-lg px-3 py-2 mb-4">
+                    <!--Item to be displayed-->
+                </div>
+
+                <!-- Action buttons -->
+                <div class="flex justify-end space-x-2 mt-4">
+                    <button id="submitEditOrder" type='submit' class="bg-[#F5B0B0] text-[#F6F296] px-4 py-2 rounded-lg">Confirm Edits</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--View Order-->
+    <div id="viewOrder" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white w-[600px] max-h-[700px] p-6 relative overflow-y-auto">
+            <button onclick="closeViewOrder()" class="absolute top-3 right-3 text-gray-500 text-xl">
+                <i class="bi bi-x"></i>
+            </button>
+            
+            <h2 class="text-3xl font-semibold mb-4 text-center">RECEIPT</h2>
+            
+            <!--Receipt Information Container-->
+            <div class="border-black border-dashed border-t-[3px] w-full pt-[5px] pb-[5px] tracking-wide">
+                <div class="space-y-1"> 
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="font-semibold inline-block mr-2">Order ID</p>
+                            <p id="viewOrderId" class="inline-block"></p>
+                        </div>
+                        <p id="viewOrderDate"></p>
+                    </div>
+                    <p class="font-semibold inline-block mr-2">Customer:</p><p id="viewOrderCustomer" class="inline-block"></p><br>
+                    <p class="font-semibold inline-block mr-2">Address Line:</p><p id="viewOrderAddress" class="inline-block"></p><br>
+                    <p class="font-semibold inline-block mr-2">Status:</p><p id="viewOrderStatus" class="inline-block"></p><br>
+                    <div class="flex justify-between">
+                        <div>
+                            <p class="font-semibold inline-block mr-2">Email:</p>
+                            <p id="viewOrderEmail" class="inline-block"></p>
+                        </div>
+                        <p id="viewOrderContactNumber"></p>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!--Container for Items-->
+            <div class="border-black border-dashed border-t-[3px] w-full pt-[5px] pb-[5px]">
+                <p class="font-semibold inline-block mr-2 tracking-wider">ITEM/S:</p>
+                <div id="itemsContainer" class="space-y-1"> 
+                </div>
+            </div>
+
+            <!--Total Payment Proper-->
+            <div class="border-black border-dashed border-t-[3px] w-full pt-[5px] pb-[5px]">
+                <div class="flex justify-between">
+                    <p class="font-semibold inline-block mr-2 tracking-wider">Total</p>
+                    <p id="viewOrderTotalPrice"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const orders = {{{json orders}}};
+    const products = {{{json products}}};
+    const addOrderButton = document.getElementById("addOrderButton");
+    const closeAddOrder = document.getElementById("closeAddOrderModal");
+
+    // Sample data for the table (replace this with actual data from your server or database)
+    
+
+    const statusOptions = ["Pending", "Shipped", "Unpaid", "Paid", "Returned", "Cancelled"];
+    const rowsPerPage = 5;
+    let currentPage = 1;
+
+
+    function getStatusClass(status) {
+        switch (status) {
+            case "Pending": return "bg-yellow-200";
+            case "Shipped": return "bg-orange-200";
+            case "Unpaid": return "bg-red-200";
+            case "Paid": return "bg-green-200";
+            case "Returned": return "bg-blue-200";
+            case "Cancelled": return "bg-blue-300";
+            default: return "";
+        }
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so add 1
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function displayTable() {
+        console.log(orders);
+        const tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = "";
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = Math.min(start + rowsPerPage, orders.length);
+        const pageData = orders.slice(start, end);
+
+        pageData.forEach((order, index) => {
+            const statusOptionsHTML = statusOptions
+                .map(option => `
+                    <option class="${getStatusClass(option)}" ${order.status === option ? 'selected' : ''}>${option}</option>
+                `)
+                .join('');
+            const row = `
+                <tr>
+                    <td id="order${order._id}" class="py-3 border border-black border-l-0 border-r-0">
+                        <form id="deleteForm${start + index + 1}" method="POST" action="/delete-order">
+                            <input id="deleteOrder${start + index + 1}" name="deleteRecordId" onchange="deleteOrder(${start + index + 1})" type="checkbox" value="${order._id}" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded 
+                            focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 
+                            focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        </form>
+                    </td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">${start + index + 1}</td>
+                    <td data-id="${order._id}" onclick="viewOrder(this.dataset.id)"class="py-3 border border-black border-l-0 border-r-0 cursor-pointer underline underline-offset-1">${order.orderNumber}</td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">${formatDate(order.orderDate)}</td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">${order.customer}</td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">
+                        <div class="border rounded-lg px-2 py-1 text-gray-700 ${getStatusClass(order.status)}">
+                            <p>${order.status}</p>
+                        </div>
+                    </td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">PHP ${order.totalPrice}</td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">
+                        <button id="editOrderButton${order._id}" class="hover:bg-gray-300 p-2 rounded-full" onclick="showEditOrderModal(${order.orderNumber})">
+                            <i class="bi bi-pencil"></i> <!-- or use another icon library for a pencil/edit icon -->
+                        </button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+
+        document.getElementById("pageInfo").innerText = `Page ${currentPage} of ${Math.ceil(orders.length / rowsPerPage)}`;
+        updateShowingInfo(start + 1, end, orders.length);
+    }
+
+    function updateOrderStatus(orderId, selectElement) {
+        const order = orders.find(order => order.id === orderId);
+        if (order) {
+            order.status = selectElement.value;
+            selectElement.className = `border rounded-lg px-2 py-1 text-gray-700 ${getStatusClass(order.status)}`;
+            console.log(`Order ${orderId} status updated to: ${order.status}`);
+        }
+    }
+
+
+
+    function addProductToForm(productId, quantity) {
+        // Create hidden inputs for product ID and quantity
+        const productIdInput = document.createElement("input");
+        productIdInput.type = "hidden";
+        productIdInput.name = "productIds[]";
+        productIdInput.value = productId;
+
+        const quantityInput = document.createElement("input");
+        quantityInput.type = "hidden";
+        quantityInput.name = "quantities[]";
+        quantityInput.value = quantity;
+
+        // Append to form
+        document.getElementById("addOrderForm").appendChild(productIdInput);
+        document.getElementById("addOrderForm").appendChild(quantityInput);
+    }
+
+
+    function addProductToFormEdit(productId, quantity) {
+        // Create hidden inputs for product ID and quantity
+        const productIdInput = document.createElement("input");
+        productIdInput.type = "hidden";
+        productIdInput.name = "editProductIds[]";
+        productIdInput.value = productId;
+
+        const quantityInput = document.createElement("input");
+        quantityInput.type = "hidden";
+        quantityInput.name = "editQuantities[]";
+        quantityInput.value = quantity;
+
+        // Append to form
+        document.getElementById("editOrderForm").appendChild(productIdInput);
+        document.getElementById("editOrderForm").appendChild(quantityInput);
+    }
+
+    function editOrder(orderId) {
+        // Implement the edit functionality (e.g., open a modal or navigate to an edit page)
+        console.log(`Edit order with ID: ${orderId}`);
+    }
+    
+    function updateShowingInfo(start, end, total) {
+        document.getElementById("showingInfo").innerText = `Showing ${start} to ${end} of ${total} entries`;
+    }
+
+    function nextPage() {
+        if (currentPage * rowsPerPage < orders.length) {
+            currentPage++;
+            displayTable();
+        }
+    }
+
+    function previousPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            displayTable();
+        }
+    }
+
+    // Initial display
+    displayTable();
+
+    //sets auto increment of ID
+    setOrderID();
+
+    function filter() {
+        // Current filters
+        const status = document.getElementById('statusFilter').value;
+        const dateRange = document.getElementById('dateFilter').value;
+        const amountRange = document.getElementById('amountFilter').value;
+
+        // Empty the table before displaying filtered results
+        const tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = "";
+
+        let filteredOrders = orders;
+
+        // Filter by status if not "All"
+        if (status !== "Status: All") {
+            filteredOrders = filteredOrders.filter(order => order.status === status);
+        }
+
+        // Filter by date range
+        const today = new Date();
+        console.log(today);
+        filteredOrders = filteredOrders.filter(order => {
+            const orderDate = new Date(order.orderDate);
+            
+            switch (dateRange) {
+                case "Today":
+                    console.log(1);
+                    return orderDate.toDateString() === today.toDateString();
+                case "This Week":
+                    console.log(2);
+                    const startOfWeek = new Date(today);
+                    startOfWeek.setDate(today.getDate() - today.getDay());
+                    return orderDate >= startOfWeek && orderDate <= today;
+                case "This Month":
+                    console.log(3);
+                    return orderDate.getFullYear() === today.getFullYear() && orderDate.getMonth() === today.getMonth();
+                case "This Year":
+                    console.log(4);
+                    return orderDate.getFullYear() === today.getFullYear();
+                default:
+                    return true; // Show all if "All" is selected
+            }
+        });
+
+        // Filter by amount range
+        filteredOrders = filteredOrders.filter(order => {
+            const totalPrice = order.totalPrice;
+            console.log(totalPrice);
+            switch (amountRange) {
+                case "0-499":
+                    return totalPrice >= 0 && totalPrice <= 499;
+                case "500-999":
+                    return totalPrice >= 500 && totalPrice <= 999;
+                case "1000-1999":
+                    return totalPrice >= 1000 && totalPrice <= 1999;
+                case "2000-above":
+                    return totalPrice >= 2000;
+                default:
+                    return true; // Show all if "All" is selected
+            }
+        });
+
+        // Display filtered results in the table
+        let count = 0;
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = Math.min(start + rowsPerPage, filteredOrders.length);
+        const pageData = filteredOrders.slice(start, end);
+
+        pageData.forEach((order, index) => {
+            count++;
+            const row = `
+                <tr>
+                    <td id="order${order._id}" class="py-3 border border-black border-l-0 border-r-0">
+                        <form id="deleteForm${start + index + 1}" method="POST" action="/delete-order">
+                            <input id="deleteOrder${start + index + 1}" name="deleteRecordId" onchange="deleteOrder(${start + index + 1})" type="checkbox" value="${order._id}" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        </form>
+                    </td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">${start + index + 1}</td>
+                    <td data-id="${order._id}" onclick="viewOrder(this.dataset.id)" class="py-3 border border-black border-l-0 border-r-0 cursor-pointer underline underline-offset-1">${order.orderNumber}</td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">${formatDate(order.orderDate)}</td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">${order.customer}</td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">
+                        <div class="border rounded-lg px-2 py-1 text-gray-700 ${getStatusClass(order.status)}">
+                            <p>${order.status}</p>
+                        </div>
+                    </td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">PHP ${order.totalPrice}</td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">
+                        <button id="editOrderButton${order._id}" class="hover:bg-gray-300 p-2 rounded-full" onclick="showEditOrderModal(${order.orderNumber})">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+            tableBody.innerHTML += row;
+        });
+
+        document.getElementById("pageInfo").innerText = `Page ${currentPage} of ${Math.ceil(filteredOrders.length / rowsPerPage)}`;
+        updateShowingInfo(start + 1, count, filteredOrders.length);
+    }
+
+    function search() {
+        const searchInput = document.getElementById('searchOrder').value;
+        const tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = ""; 
+
+        let filteredOrders = orders; // Start with all orders
+        console.log(searchInput);
+
+        if (searchInput) {
+            const regex = new RegExp(searchInput, 'i'); // i makes it case-insensitive
+            filteredOrders = filteredOrders.filter(order =>
+                regex.test(order.orderNumber) || // match order number
+                regex.test(order.customer)       // match customer name
+            );
+        }
+
+        let count = 0;
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = Math.min(start + rowsPerPage, filteredOrders.length);
+        const pageData = filteredOrders.slice(start, end);
+
+        pageData.forEach((order, index) => {
+            count++;
+            const row = `
+                <tr>
+                    <td id="order${order._id}" class="py-3 border border-black border-l-0 border-r-0">
+                        <form id="deleteForm${start + index + 1}" method="POST" action="/delete-order">
+                            <input id="deleteOrder${start + index + 1}" name="deleteRecordId" onchange="deleteOrder(${start + index + 1})" type="checkbox" value="${order._id}" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        </form>
+                    </td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">${start + index + 1}</td>
+                    <td data-id="${order._id}" onclick="viewOrder(this.dataset.id)" class="py-3 border border-black border-l-0 border-r-0 cursor-pointer underline underline-offset-1">${order.orderNumber}</td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">${formatDate(order.orderDate)}</td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">${order.customer}</td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">
+                        <div class="border rounded-lg px-2 py-1 text-gray-700 ${getStatusClass(order.status)}">
+                            <p>${order.status}</p>
+                        </div>
+                    </td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">PHP ${order.totalPrice}</td>
+                    <td class="py-3 border border-black border-l-0 border-r-0">
+                        <button id="editOrderButton${order._id}" class="hover:bg-gray-300 p-2 rounded-full" onclick="showEditOrderModal(${order.orderNumber})">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+            tableBody.innerHTML += row;
+        });
+
+        document.getElementById("pageInfo").innerText = `Page ${currentPage} of ${Math.ceil(filteredOrders.length / rowsPerPage)}`;
+        updateShowingInfo(start + 1, count, filteredOrders.length);
+    }
+
+
+    function setOrderID() {
+        let size = Object.keys(orders).length;
+        const orderid = document.getElementById('newOrderId');
+
+        orderid.value = size + 1;
+    }
+
+// Attach event listeners to all inputs for dynamic validation
+document.querySelectorAll("#addOrderForm input, #addOrderForm select").forEach((input) => {
+    input.addEventListener("input", () => validateField(input)); // Run validation on input
+    input.addEventListener("change", () => validateField(input)); // Run validation on change
+});
+
+document.querySelectorAll("#editOrderForm input, #editOrderForm select").forEach((input) => {
+    input.addEventListener("input", () => validateEditField(input)); // Run validation on input
+    input.addEventListener("change", () => validateEditField(input)); // Run validation on change
+});
+
+// Edit Form Submission
+document.getElementById("submitEditOrder").addEventListener("click", (event) => {
+    event.preventDefault(); // Prevent default form submission
+    clearErrors(); // Clear previous errors
+
+    const orderId = document.getElementById("editOrderId");
+    const orderName = document.getElementById("editOrderName");
+    const orderDate = document.getElementById("editOrderDate");
+    const orderAddress = document.getElementById("editOrderAddress");
+    const orderStatus = document.getElementById("editOrderStatus");
+    const orderContact = document.getElementById("editOrderContactNumber");
+    const orderEmail = document.getElementById("editOrderEmail");
+
+    let hasErrors = false;
+
+    // Validate fields on submission
+    [orderId, orderName, orderDate, orderAddress, orderStatus, orderContact, orderEmail].forEach((input) => {
+        if (!validateEditField(input)) {
+            hasErrors = true; // Track if any field has an error
+        }
+    });
+
+    if (hasErrors) {
+        alert("Incorrect format or Missing fields, please double check its contents.");
+        return; // Stop submission if there are errors
+    }
+
+    calculateTotalPriceEdit();
+
+    Swal.fire({
+        icon: 'question',
+        title: 'Confirm Order',
+        text: 'Are you sure you want to commit the edits?',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, confirm edits',
+        cancelButtonText: 'Cancel',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById("editOrderForm").submit();
+        }
+    });
+});
+
+// Main form submission event listener
+document.getElementById("submitAddOrder").addEventListener("click", (event) => {
+    const orderId = document.getElementById("newOrderId");
+    const orderName = document.getElementById("newOrderName");
+    const orderDate = document.getElementById("newOrderDate");
+    const orderAddress = document.getElementById("newOrderAddress");
+    const orderStatus = document.getElementById("newOrderStatus");
+    const orderContact = document.getElementById("newOrderContactNumber");
+    const orderEmail = document.getElementById("newOrderEmail");
+
+    let hasErrors = false;
+
+    // Validate fields on submission
+    [orderId, orderName, orderDate, orderAddress, orderStatus, orderContact, orderEmail].forEach((input) => {
+        if (!validateField(input)) {
+            hasErrors = true; // Track if any field has an error
+        }
+    });
+
+    if (hasErrors) {
+        event.preventDefault(); // Prevent default form submission
+        alert("Incorrect format or Missing fields, please double check its contents.");
+        return; // Stop submission if there are errors
+    }
+
+    
+    clearErrors(); // Clear previous errors
+
+    
+
+    calculateTotalPrice();
+
+    document.getElementById("addOrderForm").submit();
+
+});
+
+// Utility: Validate a single field
+function validateField(input) {
+    const value = input.value.trim();
+    const errorSpan = input.nextElementSibling;
+    let isValid = true;
+
+    if (input.id === "newOrderId" && !value) {
+        showError(input, "Order ID is required.");
+        isValid = false;
+    } else if (input.id === "newOrderName" && !value) {
+        showError(input, "Customer name is required.");
+        isValid = false;
+    } else if (input.id === "newOrderDate" && !value) {
+        showError(input, "Order date is required.");
+        isValid = false;
+    } else if (input.id === "newOrderAddress" && !value) {
+        showError(input, "Address is required.");
+        isValid = false;
+    } else if (input.id === "newOrderStatus" && !value) {
+        showError(input, "Order status is required.");
+        isValid = false;
+    } else if (input.id === "newOrderContactNumber" && (!/^\d+$/.test(value) || value.length < 10 || value.length > 15)) {
+        showError(input, "Contact number must be 10-15 digits.");
+        isValid = false;
+    } else if (input.id === "newOrderEmail" && !validateEmail(value)) {
+        showError(input, "A valid email address is required.");
+        isValid = false;
+    } else {
+        clearError(input); // Clear error if valid
+    }
+
+    return isValid;
+}
+
+// Utility: Validate a single field
+function validateEditField(input) {
+    const value = input.value.trim();
+    const errorSpan = input.nextElementSibling;
+    let isValid = true;
+
+    if (input.id === "editOrderId" && !value) {
+        showError(input, "Order ID is required.");
+        isValid = false;
+    } else if (input.id === "editOrderName" && !value) {
+        showError(input, "Customer name is required.");
+        isValid = false;
+    } else if (input.id === "editOrderDate" && !value) {
+        showError(input, "Order date is required.");
+        isValid = false;
+    } else if (input.id === "editOrderAddress" && !value) {
+        showError(input, "Address is required.");
+        isValid = false;
+    } else if (input.id === "editOrderStatus" && !value) {
+        showError(input, "Order status is required.");
+        isValid = false;
+    } else if (input.id === "editOrderContactNumber" && (!/^\d+$/.test(value) || value.length < 10 || value.length > 15)) {
+        showError(input, "Contact number must be 10-15 digits.");
+        isValid = false;
+    } else if (input.id === "editOrderEmail" && !validateEmail(value)) {
+        showError(input, "A valid email address is required.");
+        isValid = false;
+    } else {
+        clearError(input); // Clear error if valid
+    }
+
+    return isValid;
+}
+
+
+// Utility: Show error for a specific field
+function showError(input, message) {
+    const errorSpan = input.nextElementSibling;
+    if (errorSpan) {
+        errorSpan.textContent = message;
+        errorSpan.classList.add("visible");
+    }
+    input.classList.add("input-error");
+}
+
+// Utility: Clear error for a specific field
+function clearError(input) {
+    const errorSpan = input.nextElementSibling;
+    if (errorSpan) {
+        errorSpan.textContent = "";
+        errorSpan.classList.remove("visible");
+    }
+    input.classList.remove("input-error");
+}
+
+// Utility: Clear all errors
+function clearErrors() {
+    document.querySelectorAll(".error-message").forEach((error) => {
+        error.textContent = "";
+        error.classList.remove("visible");
+    });
+
+    document.querySelectorAll(".input-error").forEach((input) => {
+        input.classList.remove("input-error");
+    });
+}
+
+// Utility: Validate Email Format
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Utility: Calculate Total Price
+function calculateTotalPrice() {
+    const itemElements = document.querySelectorAll("#itemsDisplay > div");
+    let total = 0;
+
+    itemElements.forEach((item) => {
+        const price = parseFloat(item.getAttribute("data-price"));
+        const quantity = parseInt(item.querySelector("span").textContent, 10);
+
+        total += price * quantity;
+    });
+
+    document.getElementById("totalPrice").value = total.toFixed(2);
+}
+
+
+    function calculateTotalPriceEdit(){
+        const itemElements = document.querySelectorAll("#editItemsDisplay > div");
+        let total = 0;
+
+        itemElements.forEach(item => {
+            const price = parseFloat(item.getAttribute("data-price")); // Retrieve the price
+            const quantity = parseInt(item.querySelector("span").textContent, 10); // Retrieve the quantity
+
+            total += price * quantity;
+        });
+
+        document.getElementById("editTotalPrice").value = total.toFixed(2);
+    }
+
+    function deleteOrder(index) {
+        Swal.fire({
+            icon: 'warning', // Changing the icon to warning for a deletion alert
+            title: 'Are you sure?',
+            text: 'Do you want to delete this order?',
+            showCancelButton: true, // Shows the cancel button
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(`deleteForm${index}`).submit();
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                document.getElementById(`deleteOrder${index}`).checked = false;
+                return;
+            }
+        });
+    }
+
+    // show Edit Modal
+    function showEditOrderModal (id) {
+        document.getElementById("editOrderModal").classList.remove("hidden");
+        displayEditModalValues(id);
+    }
+
+    function displayEditModalValues (id){
+        for (let i = 0; i < orders.length; i++){
+            if (orders[i].orderNumber == id){
+                document.getElementById('editOrderId').value = orders[i].orderNumber; //order number
+                document.getElementById('editOrderName').value = orders[i].customer; //customer name
+
+                const date = formatDate(orders[i].orderDate); //parse date
+                document.getElementById('editOrderDate').value = date; //customer name
+
+                document.getElementById('editOrderAddress').value = orders[i].address;
+                document.getElementById('editOrderStatus').value = orders[i].status;
+                document.getElementById('editOrderContactNumber').value = orders[i].contact;
+                document.getElementById('editOrderEmail').value = orders[i].email; 
+
+                for (const item of orders[i].items){
+                    // create the dynamic
+                    console.log('item: ',item);
+
+                    const price = lookPrice(item.productId);
+                    const name = lookName(item.productId);
+                    console.log('',name);
+                    let quantity = item.stockNumber;
+                    const maxStock = lookStock(item.productId) + quantity; 
+
+                    console.log('Stock: ', item.stockNumber);
+                    console.log('Max Stock: ', maxStock);
+                    
+                    if (quantity === 0) {
+                        continue;
+                    } else {
+                        const editItem = document.createElement("div");
+                        editItem.classList.add("flex", "pb-[1px]");
+                        editItem.setAttribute("data-id", item.productId); 
+                        editItem.setAttribute("data-price",price);
+
+                        const productName = document.createElement("p");
+                        productName.textContent = name;
+                        productName.classList.add("mr-4");
+                        editItem.appendChild(productName);
+
+                        const controlsContainer = document.createElement("div");
+                        controlsContainer.classList.add("ml-auto", "flex", "items-center", "gap-2");
+
+                        const quantitySpan = document.createElement("span");
+                        quantitySpan.textContent = item.stockNumber;
+                        quantitySpan.classList.add("mr-2");
+                        quantitySpan.id = `quantity-${item.productId}`;
+
+                        const editdecrementButton = document.createElement("button");
+                        editdecrementButton.textContent = "▼";
+                        editdecrementButton.type = "button";
+                        editdecrementButton.onclick = function() {
+                            if (quantity > 0) { 
+                                quantity--;
+                                quantitySpan.textContent = quantity;
+                                document.getElementById(`quantityInput-${item.productId}`).value = quantity;
+                            }
+                        };
+
+                        const editincrementButton = document.createElement("button");
+                        editincrementButton.textContent = "▲";
+                        editincrementButton.type = "button";
+                        editincrementButton.onclick = function() {
+                            console.log(quantity);
+                            console.log(item._id);
+                            if (quantity+1 <= maxStock) { 
+                                quantity++;
+                                quantitySpan.textContent = quantity;
+                                document.getElementById(`quantityInput-${item.productId}`).value = quantity; 
+                            }
+                        };
+
+                        controlsContainer.appendChild(quantitySpan);
+                        controlsContainer.appendChild(editdecrementButton);
+                        controlsContainer.appendChild(editincrementButton);
+                        editItem.appendChild(controlsContainer);
+
+                        document.getElementById("editItemsDisplay").appendChild(editItem);
+
+                        const productIdInput = document.createElement("input");
+                        productIdInput.type = "hidden";
+                        productIdInput.name = "editProductIds[]";
+                        productIdInput.value = item.productId;
+                        productIdInput.id = `productIdInput-${item.productId}`;
+
+                        const quantityInput = document.createElement("input");
+                        quantityInput.type = "hidden";
+                        quantityInput.name = "editQuantities[]";
+                        quantityInput.value = item.stockNumber;
+                        quantityInput.id = `quantityInput-${item.productId}`; 
+
+                        document.getElementById("editOrderForm").appendChild(productIdInput);
+                        document.getElementById("editOrderForm").appendChild(quantityInput);
+                    }
+                }
+            }
+        }
+    }
+
+    function lookOrder(id){
+        for (let i = 0; i < orders.length; i++){
+            if (orders[i]._id === id){
+                console.log('found');
+                return 1;
+            }
+        }
+    }
+
+    function lookPrice (id){
+        for (let i = 0; i < products.length; i++){
+            if (products[i]._id === id){
+                console.log('found');
+                return products[i].price;
+            }
+        }
+    }
+
+    function lookName(id){
+        for (let i = 0; i < products.length; i++){
+            if (products[i]._id === id){
+                console.log('found');
+                return products[i].name;
+            }
+        }
+    }
+
+    function lookStock(id){
+        for (let i = 0; i < products.length; i++){
+            if (products[i]._id === id){
+                console.log('found');
+                return products[i].stock;
+            }
+        }
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based, so add 1
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+    // show Add Modal
+    addOrderButton.addEventListener('click',()=> {
+        document.getElementById("addOrderModal").classList.remove("hidden");
+    })
+
+    closeAddOrder.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.getElementById("addOrderModal").classList.add("hidden");
+        document.getElementById('searchInput').classList.add('rounded-lg');
+        document.getElementById("itemsDisplay").innerHTML = "";
+    })
+
+    function closeEditOrderModal() {
+        document.getElementById("editOrderModal").classList.add("hidden");
+        document.getElementById('editSearchInput').classList.add('rounded-lg');
+        document.getElementById("editItemsDisplay").innerHTML = "";
+
+    }
+
+    // Optional: Close modal when clicking outside of it
+    window.onclick = function(event) {
+        const modal = document.getElementById("editOrderModal");
+        if (event.target == modal) {
+            closeEditOrderModal();
+        }
+    }
+
+    // JavaScript to handle Enter keypress and display the search result
+    document.getElementById("searchInput").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); 
+
+            const searchValue = event.target.value.trim();
+            event.target.value = ''; 
+
+            const product = products.find(p => p.name.toLowerCase() === searchValue.toLowerCase());
+            
+            if (product) {
+                const productId = product._id;
+                let quantity = 1;
+                const price = product.price; 
+                const maxStock = product.stock; 
+
+                const newItem = document.createElement("div");
+                newItem.classList.add("flex", "pb-[1px]");
+                newItem.setAttribute("data-id", productId); 
+                newItem.setAttribute("data-price", price);
+
+                const productName = document.createElement("p");
+                productName.textContent = product.name;
+                productName.classList.add("mr-4");
+                newItem.appendChild(productName);
+
+                const controlsContainer = document.createElement("div");
+                controlsContainer.classList.add("ml-auto", "flex", "items-center", "gap-2");
+
+                const quantitySpan = document.createElement("span");
+                quantitySpan.textContent = quantity;
+                quantitySpan.classList.add("mr-2");
+                quantitySpan.id = `quantity-${productId}`; 
+
+                const decrementButton = document.createElement("button");
+                decrementButton.textContent = "▼";
+                decrementButton.type = "button";
+                decrementButton.onclick = function() {
+                    if (quantity > 1) { 
+                        quantity--;
+                        quantitySpan.textContent = quantity;
+                        document.getElementById(`quantityInput-${productId}`).value = quantity; 
+                    }
+                };
+
+                const incrementButton = document.createElement("button");
+                incrementButton.textContent = "▲";
+                incrementButton.type = "button";
+                incrementButton.onclick = function() {
+                    if (quantity+1 <= maxStock) { 
+                        quantity++;
+                        quantitySpan.textContent = quantity;
+                        document.getElementById(`quantityInput-${productId}`).value = quantity; 
+                    }
+                };
+
+                controlsContainer.appendChild(quantitySpan);
+                controlsContainer.appendChild(decrementButton);
+                controlsContainer.appendChild(incrementButton);
+                newItem.appendChild(controlsContainer);
+
+                document.getElementById("itemsDisplay").appendChild(newItem);
+
+                const productIdInput = document.createElement("input");
+                productIdInput.type = "hidden";
+                productIdInput.name = "productIds[]";
+                productIdInput.value = productId;
+                productIdInput.id = `productIdInput-${productId}`;
+
+                const quantityInput = document.createElement("input");
+                quantityInput.type = "hidden";
+                quantityInput.name = "quantities[]";
+                quantityInput.value = quantity;
+                quantityInput.id = `quantityInput-${productId}`; 
+
+                document.getElementById("addOrderForm").appendChild(productIdInput);
+                document.getElementById("addOrderForm").appendChild(quantityInput);
+            }
+        }
+    });
+
+    // edit order function
+    document.getElementById('editSearchInput').addEventListener('keypress', function(event) {
+        if (event.key === "Enter"){
+            event.preventDefault();
+
+            const searchValue = event.target.value.trim();
+            event.target.value = ''; 
+
+            //returns a product from the array of products
+            const item = products.find(p => p.name.toLowerCase() === searchValue.toLowerCase());
+
+            const editProductIds = document.getElementsByName('editProductIds[]');
+
+            // Iterate over the NodeList and extract the values
+            const values = Array.from(editProductIds).map(element => element.value);
+
+            for (let i = 0; i < values.length; i++){
+                console.log(values[i]);
+                if (item._id === values[i]) {
+                    return;
+                } 
+            }
+
+            if (item) {
+                // get price of product
+                // get stock of product
+                // get name of product
+                const price = lookPrice(item._id);
+                const name = lookName(item._id);
+                console.log(name);
+                let maxStock = lookStock(item._id); 
+
+                console.log(`max stock for [${name}] is ${maxStock}`);
+
+                
+
+                // means that product is out of stock
+                if (maxStock < 1){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Product is Out of Stock',
+                        text: 'Search for another product!',
+                        confirmButtonText: 'Confirm'
+                    }).then((result) => {
+                        if (result.isConfirmed){
+                            return;
+                        }
+                    });
+                } else {
+                    let quantity = 1;
+                    const editItem = document.createElement("div");
+                    editItem.classList.add("flex", "pb-[1px]");
+                    editItem.setAttribute("data-id", item._id); 
+                    editItem.setAttribute("data-price",price);
+
+                    const productName = document.createElement("p");
+                    productName.textContent = name;
+                    productName.classList.add("mr-4");
+                    editItem.appendChild(productName);
+
+                    const controlsContainer = document.createElement("div");
+                    controlsContainer.classList.add("ml-auto", "flex", "items-center", "gap-2");
+
+                    const quantitySpan = document.createElement("span");
+                    quantitySpan.textContent = quantity;
+                    quantitySpan.classList.add("mr-2");
+                    quantitySpan.id = `quantity-${item._id}`; 
+
+                    const editdecrementButton = document.createElement("button");
+                    editdecrementButton.textContent = "▼";
+                    editdecrementButton.type = "button";
+                    editdecrementButton.onclick = function() {
+                        if (quantity > 0) { 
+                            quantity--;
+                            quantitySpan.textContent = quantity;
+                            document.getElementById(`quantityInput-${item._id}`).value = quantity; 
+                        }
+                    };
+
+                    const editincrementButton = document.createElement("button");
+                    editincrementButton.textContent = "▲";
+                    editincrementButton.type = "button";
+                    editincrementButton.onclick = function() {
+                        console.log(maxStock);
+                        console.log(quantity);
+                        if (quantity+1 <= maxStock) { 
+                            quantity++;
+                            quantitySpan.textContent = quantity;
+                            document.getElementById(`quantityInput-${item._id}`).value = quantity; 
+                        }
+                    };
+
+                    controlsContainer.appendChild(quantitySpan);
+                    controlsContainer.appendChild(editdecrementButton);
+                    controlsContainer.appendChild(editincrementButton);
+                    editItem.appendChild(controlsContainer);
+
+                    document.getElementById("editItemsDisplay").appendChild(editItem);
+
+                    const productIdInput = document.createElement("input");
+                    productIdInput.type = "hidden";
+                    productIdInput.name = "editProductIds[]";
+                    productIdInput.value = item._id;
+                    productIdInput.id = `productIdInput-${item._id}`;
+
+                    const quantityInput = document.createElement("input");
+                    quantityInput.type = "hidden";
+                    quantityInput.name = "editQuantities[]";
+                    quantityInput.value = quantity;
+                    quantityInput.id = `quantityInput-${item._id}`; 
+
+                    document.getElementById("editOrderForm").appendChild(productIdInput);
+                    document.getElementById("editOrderForm").appendChild(quantityInput);
+                }
+                //console.log('These values: ',values); // This will log an array of all the values
+            } 
+        }
+    });
+
+    function closeViewOrder(){
+        document.getElementById('itemsContainer').innerHTML = "";
+        document.getElementById('viewOrder').classList.add('hidden');
+    }
+
+    function viewOrder(id){
+        console.log(orders);
+        for (let i = 0; i < orders.length; i++){
+            if (orders[i]._id == id){
+                document.getElementById('viewOrderId').innerHTML = orders[i].orderNumber;
+                document.getElementById('viewOrderDate').innerHTML = formatDate(orders[i].orderDate);
+                document.getElementById('viewOrderCustomer').innerHTML = orders[i].customer;
+                document.getElementById('viewOrderAddress').innerHTML = orders[i].address;
+                document.getElementById('viewOrderEmail').innerHTML = orders[i].email;
+                document.getElementById('viewOrderContactNumber').innerHTML = orders[i].contact;
+                document.getElementById('viewOrderStatus').innerHTML = orders[i].status;
+
+                for (let j = 0; j < orders[i].items.length ; j++){
+                    if (orders[i].items[j].stockNumber == 0){
+                        continue;
+                    }
+                    const productName = lookName(orders[i].items[j].productId);
+                    const initialProductPrice = lookPrice(orders[i].items[j].productId);
+
+                    const productPrice = orders[i].items[j].stockNumber * initialProductPrice;
+
+                    const row = `
+                        <div id="container${orders[i].orderNumber}"class="flex justify-between">
+                            <div class="min-w-[220px] max-w-[220px] text-left">
+                                <p>${productName}</p>
+                            </div>
+                            <div class="min-w-[68px] max-w-[68px] text-center">
+                                <p>${orders[i].items[j].stockNumber}</p>
+                            </div>
+                            <div class="min-w-[134px] max-w-[134px] text-right">
+                                <p>₱${productPrice}</p>
+                            </div>
+                        </div>
+                    `
+                    
+                    document.getElementById('itemsContainer').innerHTML += row;
+                }
+
+                document.getElementById('viewOrderTotalPrice').innerHTML = ('₱' + orders[i].totalPrice);
+            }
+        }
+        document.getElementById('viewOrder').classList.remove('hidden');
+    }
+
+</script>

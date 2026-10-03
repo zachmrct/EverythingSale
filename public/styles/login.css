@@ -1,0 +1,98 @@
+/* Add CSS for login here */
+@import "base.css";
+
+.divider {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+
+.background-half {
+    width: 56.5%;
+    height: 100%;
+    position: absolute;
+    background-color: #ea9f9f;
+}
+
+.whole-login {
+    width: 100%;
+    height: 80%;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    flex-direction: column;
+}
+.login-form-container {
+    display: flex;
+    flex-direction: column;
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Center the login container */
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    background-color: #F6F296;
+    border-radius: 10px;
+    padding: 3%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    box-sizing: content-box;
+}
+
+
+login-form-container {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+}
+
+.policy {
+    padding-top: 30px;
+    font-size: x-small;
+}
+
+/* wrong creds haha */
+.shake {
+    animation: shake 0.5s;
+}
+.loginBtn{
+    margin-top: 30px;
+}
+.rememberMeGroup{
+    /* margin-bottom: 15px; */
+    position: absolute;
+    margin-top: 160px;
+    font-size: x-small;
+    align-content: baseline;
+}
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+}
+
+.red-outline {
+    outline: 1px solid red;
+}
+
+.wrong-credentials {
+    display: none;
+    margin-bottom: 10px;
+    color: red;
+    font-size: 0.9rem;
+}
+
+.box {
+    margin: 10px 0;
+}

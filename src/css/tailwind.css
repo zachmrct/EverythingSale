@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Error Text Styling */
+.error-message {
+  color: red; /* Red text color */
+  font-size: 0.75rem; /* Matches Tailwind's `text-xs` */
+  display: none; /* Hidden by default */
+  margin-top: 0.25rem; /* Small spacing above the error */
+}
+
+.error-message.visible {
+  display: block; /* Show when error is triggered */
+}
+
+.input-error {
+  border-color: red; /* Add red border to input field with error */
+}
+
+
+.category-item {
+    cursor: pointer;
+  }
+
+  .category-item strong {
+    color: #999999; /* gray text */
+  }
+
+  .category-item:hover {
+    border-bottom: 2px solid #888888; /* gray border on hover */
+  }
+
+  .category-item.active {
+    border-bottom: 2px solid #E98484; /* black border for active */
+  }
+
+  .category-item.active strong {
+    color: black; /* black text for active */
+  }
+
+  textarea {
+    resize: none; /* Prevents resizing of the textarea */
+}
+
+table {
+    border-collapse:separate;
+    border:solid black 1px;
+    border-radius:6px;
+}
+
+td, th {
+    border-left:solid black 1px;
+    border-top:solid black 1px;
+}
+
+th {
+    background-color: violet;
+    border-top: none;
+}
+
+td:first-child, th:first-child {
+     border-left: none;
+}
+
+#sidebar.hidden {
+  transform: translateX(-100%); /* Hide the sidebar off-screen */
+}
+
+#showSidebarBtn {
+  transition: opacity 0.3s ease;
+}

@@ -1,0 +1,61 @@
+[
+  {
+    "_id": "6651ead6a17e4939441ea328",
+    "name": "Zara",
+    "pieces": [
+      "6651ead6a17e4939441ea32a",
+      "6651ead6a17e4939441ea32b",
+      "6651ead6a17e4939441ea32c",
+      "6651ead6a17e4939441ea32d",
+      "6651ead6a17e4939441ea32e",
+      "6651ead6a17e4939441ea31a",
+      "6651ead6a17e4939441ea31b"
+    ],
+    "collectionPicture": "zara-logo.jpg",
+    "category": "women"
+  },
+  {
+    "_id": "6651ead6a17e4939441ea327",
+    "name": "Uniqlo",
+    "pieces": [
+      "6651ead6a17e4939441ea381",
+      "6651ead6a17e4939441ea31c",
+      "6651ead6a17e4939441ea31d",
+      "6651ead6a17e4939441ea31e",
+      "6651ead6a17e4939441ea30a",
+      "6651ead6a17e4939441ea30b",
+      "6651ead6a17e4939441ea30c"
+    ],
+    "collectionPicture": "uniqlo-logo.png",
+    "category": "men"
+  },
+  {
+    "_id": "6651ead6a17e4939441ea326",
+    "name": "Shein",
+    "pieces": [
+      "6651ead6a17e4939441ea30d",
+      "6651ead6a17e4939441ea30e",
+      "6651ead6a17e4939441ea39a",
+      "6651ead6a17e4939441ea39b",
+      "6651ead6a17e4939441ea39c",
+      "6651ead6a17e4939441ea39d",
+      "6651ead6a17e4939441ea39e"
+    ],
+    "collectionPicture": "shein-logo.png",
+    "category": "children"
+  },
+  {
+    "_id": "6651ead6a17e4939441ea325",
+    "name": "Unknown",
+    "pieces": [
+      "6651ead6a17e4939441ea38a",
+      "6651ead6a17e4939441ea38b",
+      "6651ead6a17e4939441ea38c",
+      "6651ead6a17e4939441ea38d",
+      "6651ead6a17e4939441ea38e",
+      "6651ead6a17e4939441ea380"
+    ],
+    "collectionPicture": "unknown-logo.jpg",
+    "category": "other"
+  }
+]

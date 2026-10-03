@@ -1,0 +1,320 @@
+{{!-- page for all products --}}
+{{> newnavbar}}
+<!-- Pop-up Button -->
+<div class="z-10 bg-white w-full h-screen  rounded-[45px]">
+    <div class="flex-1 w-full h-full flex flex-col z-10">
+        <!-- Category Menu -->
+        <div class="w-full relative h-[91px] border-b-2 bg-white border-gray-300 space-x-[10px] flex z-10 rounded-tl-[45px]" id="categoryMenu">
+            <div class="w-[200px] category-item flex items-center justify-center active" data-category="All">
+                <strong class="inter font-[700] text-[25px]">All</strong>
+            </div>
+            {{#each uniqueCategoriesArray}}
+                <div class="w-[200px] category-item flex items-center justify-center " data-category="{{this}}">
+                    <strong class="inter font-[700] text-[25px]">{{this}}</strong>
+                </div>
+            {{/each}}
+        </div>
+        
+
+        
+        <!-- Product Grid -->
+<div class="flex-1 w-full h-full p-[75px] overflow-auto mb-10 mt-[-70px]">
+    <!-- Search Bar -->
+<!-- Search Bar and Filter Button -->
+<div class="flex justify-start my-4 ml-[-20px] p-4 space-x-4">
+    <input
+        type="text"
+        id="searchBar"
+        class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300"
+        placeholder="Search for products..."
+    />
+    <button
+        id="filterButton"
+        class="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-sm hover:bg-blue-600 focus:outline-none"
+    >
+        Filter
+    </button>
+</div>
+
+<!-- Filter Modal -->
+<div id="filterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="relative bg-white w-[350px] p-6 rounded-lg shadow-lg left-[350px] top-[100px] ">
+        <h2 class="text-lg font-bold mb-4">Filter Options</h2>
+        <!-- Add filter options here -->
+        <div class="space-y-4">
+            <!-- Price Range Filter -->
+            <div>
+                <label class="block font-semibold mb-1">Price Range</label>
+                <div class="flex items-center">
+                    <input type="range" id="minPrice" min="0" max="{{maxPrice}}" value="0" class="w-full" />
+                    <input type="number" id="minPriceValue" value="0" class="w-[80px] p-2 border border-gray-300 rounded ml-8 " readonly />
+                </div>
+                <div class="flex items-center">
+                    <input type="range" id="maxPrice" min="0" max="{{maxPrice}}" value="{{maxPrice}}" class="w-full" />
+                    <input type="number" id="maxPriceValue" value="{{maxPrice}}" class="w-[80px] p-2 border border-gray-300 rounded ml-8" readonly />
+                </div>
+            </div>
+            <div>
+                <label class="block font-semibold mb-1">Stock Range</label>
+                <input type="text" id="minStock"  placeholder="Min Stock" class="w-full p-2 border border-gray-300 rounded" />
+                <input type="text" id="maxStock" placeholder="Max Stock" class="w-full p-2 border border-gray-300 rounded mt-2" />
+            </div>
+            <!-- Sort By Name Filter -->
+            <div>
+                <label class="block font-semibold mb-1">Sort By Name</label>
+                <select id="sortByName" class="w-full p-2 border border-gray-300 rounded">
+                    <option value="">Select</option>
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Close button -->
+        <button id="closeModalButton" class="mt-6 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 w-full">Close</button>
+    </div>
+</div>
+    <div class="w-full h-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="productContainer">
+        {{#each updatedProducts}}
+            <div id="product{{this._id}}" class="container bg-white h-[310px] w-[350px] rounded-xl border relative border-gray-300 shadow-md duration-100 hover:scale-105" data-id="{{this._id}}" data-name="{{this.name}}" data-status="{{this.status}}" data-price="{{this.price}}" data-category="{{this.category}}" data-stock="{{this.stock}}" data-materials="{{this.material}}" data-picture="/uploads/products/{{this.pictures.[0]}}" data-collection-name="{{this.collectionNames}}" data-collection-id="{{this.collectionIds}}">
+                <div class="absolute top-2 right-2">
+                    <button id="dropdown{{this._id}}" class="focus:outline-none hover:bg-slate-200 rounded dropdown-toggle" data-id="{{this._id}}">
+                        <i class="bi bi-three-dots-vertical text-gray-400"></i> 
+                    </button>
+                    <div class="dropdown-menu absolute right-0 mt-2 w-20 h-auto bg-white rounded-lg shadow-lg hidden">
+                        <ul class="py-1 text-gray-700">
+                            <li>
+                                <button  id="editButton{{this._id}}" class="block px-2 py-1 hover:bg-gray-100 edit-button" data-size="{{this.variations.size}}" data-color="{{this.variations.color}}" data-id="{{this._id}}" data-name="{{this.name}}" data-status="{{this.status}}" data-price="{{this.price}}" data-category="{{this.category}}" data-stock="{{this.stock}}" data-materials="{{this.material}}" data-picture="/uploads/products/{{this.pictures.[0]}}" data-collection-name="{{this.collectionNames}}" data-collection-id="{{this.collectionIds}}">Edit</button>
+                            </li>
+                            <li>
+                                <button id="deleteButton{{this._id}}" class="block px-2 py-1 hover:bg-gray-100 delete-button" data-id="{{this._id}}" data-name="{{this.name}}" data-price="{{this.price}}" data-stock="{{this.stock}}" data-picture="/uploads/products/{{this.pictures.[0]}}" data-collection-name="{{this.collectionNames}}" data-collection-id="{{this.collectionIds}}">Delete</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="w-full h-[250px] flex items-center justify-center border-b border-gray-200">
+                    <img class="text-gray-400 h-full w-auto object-contain rounded-t-xl" src="/uploads/products/{{this.pictures.[0]}}" alt="{{limitString this.name}}">
+                </div>
+                <div class="px-7 py-1 flex flex-col justify-between border-t border-gray-300 h-[40px]">
+                    <div class="text-black font-bold">{{limitString this.name}}</div>
+                    <div class="flex flex-row justify-between">
+                        <div class="text-black font-semibold">&#8369;{{this.price}}</div>
+                        <strong class="text-black text-xs bg-[#F5B0B0] px-2 py-1 rounded mb-4">{{this.stock}} in stock</strong>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</div>
+
+        <!-- Add product Modal Trigger Button -->
+        <button id="openModalBtn" class="z-30 fixed bottom-[30px] right-[30px] bg-[#897198] text-white rounded-full w-[60px] h-[60px] flex items-center justify-center shadow-lg hover:bg-gray-400 hover:text-black duration-300 active:bg-black active:text-white">
+            <i class="bi bi-plus text-[30px]"></i>
+        </button>
+
+        <!-- Add product Modal (hidden by default) -->
+        <form action="/add-product" method="POST" id="productModal" class=" z-30 fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 hidden" enctype="multipart/form-data">
+            <div class="bg-[#F6F296] w-[750px] h-auto rounded-2xl p-[25px] relative shadow-2xl">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-[20px] text-[#F5B0B0] font-extrabold">Add Product</h2>
+                    <button id="closeModalBtn" class="text-[24px] text-gray-600 hover:text-gray-900">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="flex space-x-4">
+                    <!-- Image Upload Section (Left Side) -->
+                    <div class="flex-shrink-0">
+                        <input id="imageInput" type="file" name="imagePath" accept="image/*" class="hidden" value="default-picture.png"/>
+                        <label for="imageInput" class="cursor-pointer bg-gray-100 w-[250px] h-[250px] rounded-xl shadow-inner border border-gray-200 flex items-center justify-center">
+                            <span id="addProductImagePlaceholder" class="text-gray-500 text-xs text-center">Click to Upload Image</span>
+                        </label>
+                    </div>
+
+                    <!-- Product Details (Right Side) -->
+                    <div class="flex flex-col space-y-4 w-full">
+                        <!-- Product Name Input -->
+                        <input id="newProductName" name="newProductName" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" type="text" placeholder="Product Name" required>
+
+                        <div class="flex flex-row">
+                            <!-- Product Cost Input -->
+                            <input id="newProductCost" name="newProductCost" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full m-2" type="text" pattern="^\d+(\.\d+)?$" placeholder="Cost (numbers only)" required>
+                            <!-- Product Stock Input -->
+                            <input id="newProductStock" name="newProductStock" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full m-2" type="text" pattern="^\d+$" placeholder="Stock (numbers only)" required>
+                        </div>
+
+                        <!-- Product Material Input -->
+                        <input id="newProductMaterial" name="newProductMaterial" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" type="text" pattern="^\w+(,\w+)*$" placeholder="Material/s: Cloth,Cotton,Denim... (no space in-between)" required>
+
+                        <!-- Product Color Input -->
+                        <input id="newProductColor" name="newProductColor" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" type="text" pattern="^\w+(,\w+)*$" placeholder="Color/s: Blue,Red,Green... (no space in-between)" required>
+
+                        <!-- Product Size Select -->
+                        <div class="flex flex-row">
+                            <input type="checkbox" id="extra-small" name="newProductSize" value="XS" class="mr-[5px]">
+                            <label for="extra-small" class="lexend mr-[15px]">XS</label><br>
+                            <input type="checkbox" id="small" name="newProductSize" value="S" class="mr-[5px]">
+                            <label for="small" class="lexend mr-[15px]">S</label><br>
+                            <input type="checkbox" id="medium" name="newProductSize" value="M" class="mr-[5px]">
+                            <label for="medium" class="lexend mr-[15px]">M</label><br>
+                            <input type="checkbox" id="large" name="newProductSize" value="L" class="mr-[5px]">
+                            <label for="large" class="lexend mr-[15px]">L</label><br>
+                            <input type="checkbox" id="extra-large" name="newProductSize" value="XL" class="mr-[5px]">
+                            <label for="extra-large" class="lexend mr-[15px]">XL</label><br>
+                        </div>
+
+                        <!-- Product Collection Select -->
+                        <select id="newProductCollection" name="newProductCollection" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" required>
+                            <option value="" disabled selected>Select Type</option>
+                            {{#each collections}}
+                                <option value="{{this._id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+
+                        <!-- Product Category Select -->
+                        <select id="newProductCategory" name="newProductCategory" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" required>
+                            <option value="" disabled selected>Select Category</option>
+                            {{#each allCategoriesArray}}
+                                <option value="{{this.category}}">{{this.category}}</option>
+                            {{/each}}
+                        </select>
+
+                        <!-- Product Status Select -->
+                        <select id="newProductStatus" name="newProductStatus" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" required>
+                            <option value="" disabled selected>Select Status</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                        
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-center mt-8">
+                    <button type="submit" id="addModalSubmitBtn" class="bg-[#F5B0B0] text-[#F6F296] w-[260px] py-3 font-semibold rounded-full hover:bg-yellow-500 transition-all duration-300">
+                        Submit 
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Edit product Modal (hidden by default) -->
+        <form action="/edit-product" method="POST" id="editProductModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 hidden z-30" enctype="multipart/form-data">
+            <div class="bg-[#F6F296] w-[750px] h-auto rounded-2xl p-[25px] relative shadow-2xl">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-[20px] text-[#F5B0B0] font-extrabold">Edit Product</h2>
+                    <button id="closeEditModalBtn" class="text-[24px] text-gray-600 hover:text-gray-900" type="button">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="flex space-x-4">
+                    <input type="hidden" name="editId" id="editId" />
+                    <!-- Image Upload Section (Left Side) -->
+                    <div class="flex-shrink-0">
+                        <input id="imageEditInput" type="file" name="imageEditInput" accept="image/*" class="hidden"/>
+                        <label for="imageEditInput" class="cursor-pointer bg-gray-100 w-[250px] h-[250px] rounded-xl shadow-inner border border-gray-200 flex items-center justify-center">
+                            <span id="editProductImagePlaceholder" class="text-gray-500 text-xs text-center">Click to Upload Image</span>
+                        </label>
+                    </div>
+
+                    <!-- Product Details (Right Side) -->
+                    <div class="flex flex-col space-y-4 w-full">
+                        <!-- Product Name Input -->
+                        <input id="editProductName" name="editProductName" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" type="text" placeholder="Product Name" required>
+
+                        <div class="flex flex-row">
+                            <!-- Product Cost Input -->
+                            <input id="editProductCost" name="editProductCost" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full m-2" type="text" pattern="^\d+(\.\d+)?$" placeholder="Cost (numbers only)" required>
+
+                            <!-- Product Stock Input -->
+                            <input id="editProductStock" name="editProductStock" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full m-2" type="text" pattern="^\d+$" placeholder="Stock (numbers only)" required>
+                        </div>
+
+                        <!-- Product Material Input -->
+                        <input id="editProductMaterial" name="editProductMaterial" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" type="text" pattern="^\w+(,\w+)*$" placeholder="Material/s: Cloth,Cotton,Denim... (no space in-between)" required>
+
+                        <!-- Product Color Input -->
+                        <input id="editProductColor" name="editProductColor" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" type="text" pattern="^\w+(,\w+)*$" placeholder="Color/s: Blue,Red,Green... (no space in-between)" required>
+
+                        <!-- Product Size Select -->
+                        <div class="flex flex-row">
+                            <input type="checkbox" id="edit-extra-small" name="editProductSize[]" value="XS" class="mr-[5px]"/>
+                            <label for="edit-extra-small" class="lexend mr-[15px]">XS</label><br>
+                            <input type="checkbox" id="edit-small" name="editProductSize[]" value="S" class="mr-[5px]">
+                            <label for="edit-small" class="lexend mr-[15px]">S</label><br>
+                            <input type="checkbox" id="edit-medium" name="editProductSize[]" value="M" class="mr-[5px]">
+                            <label for="edit-medium" class="lexend mr-[15px]">M</label><br>
+                            <input type="checkbox" id="edit-large" name="editProductSize[]" value="L" class="mr-[5px]">
+                            <label for="edit-large" class="lexend mr-[15px]">L</label><br>
+                            <input type="checkbox" id="edit-extra-large" name="editProductSize[]" value="XL" class="mr-[5px]">
+                            <label for="edit-extra-large" class="lexend mr-[15px]">XL</label><br>
+                        </div>
+
+                        <!-- Product Collection Select -->
+                        <select id="editProductCollection" name="editProductCollection" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" required>
+                            <option value="" disabled selected>Select Type</option>
+                            {{#each collections}}
+                                <option value="{{this._id}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+
+                        <!-- Product Category Select -->
+                        <select id="editProductCategory" name="editProductCategory" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" required>
+                            <option value="" disabled selected>Select Category</option>
+                            {{#each allCategoriesArray}}
+                                <option value="{{this.category}}">{{this.category}}</option>
+                            {{/each}}
+                        </select>
+
+                        <!-- Product Status Select -->
+                        <select id="editProductStatus" name="editProductStatus" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" required>
+                            <option value="" disabled selected>Select Status</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                        
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-center mt-8">
+                    <button type="submit" id="editModalSubmitBtn" class="bg-[#F5B0B0] text-[#F6F296] w-[260px] py-3 font-semibold rounded-full hover:bg-yellow-500 transition-all duration-300">
+                        Submit 
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Delete Confirmation Modal (hidden by default) -->
+        <form action="/delete-product" method="POST" id="deleteConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-30">
+            <div class="bg-[#F5B0B0] w-[450px] h-[490px] rounded-xl p-[20px] relative shadow-lg flex flex-col justify-between">
+                <button id="cancelDeleteBtn" class="duration-300 text-xl py-1 px-1 rounded hover:bg-gray-400 absolute top-4 right-4">
+                    <i class="bi bi-x"></i> <!-- Ensure you have the 'bootstrap-icons' font loaded if you're using 'bi-x' -->
+                </button>
+                <p class="m-3 text-xl font-bold text-[#F6F296] text-center">ARE YOU SURE YOU WANT TO DELETE THIS PRODUCT?</p>
+                <input type="hidden" name="deleteId" id="deleteId" />
+                <div class="container ml-7 bg-white h-[310px] w-[350px] rounded-xl border relative border-gray-300 shadow-md duration-100">
+                        <div class="w-full h-[250px] flex items-center justify-center border-b border-gray-200">
+                            <img id="deletePicture"class="text-gray-400 h-full w-auto object-contain rounded-t-xl" src="" alt="">
+                        </div>
+                        <div class="px-7 py-1 flex flex-col justify-between border-t border-gray-300 h-[40px]">
+                            <div id="deleteName" class="text-black font-bold "></div>
+                            <div class="flex flex-row justify-between">
+                                <div id="deletePrice"class="text-black font-semibold"> &#8369;</div>
+                                <strong id="deleteStock"class="text-black text-xs bg-[#F5B0B0] px-2 py-1 rounded mb-4"> in stock</strong>
+                            </div>
+                        </div>
+                </div>
+
+                <button id="confirmDeleteBtn" class="bg-[#F6F296] text-[#F5B0B0] py-2 px-4 w-40 mx-auto rounded">Delete</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+<script src="/scripts/productPage.js"></script>

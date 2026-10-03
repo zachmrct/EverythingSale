@@ -1,0 +1,260 @@
+{{!-- page for all users --}}
+{{> newnavbar}}
+<div class="z-10 bg-white w-full h-full rounded-l-[45px] px-20">
+    <div id="viewProfile" class="flex-1 w-full h-full flex flex-col z-10">
+        <!-- Header -->
+        <div class="w-full relative h-[91px] border-b-2 justify-center bg-white border-gray-300 flex z-10 rounded-tl-[45px] items-center">
+            <h1 class="font-bold text-[25px] inter">{{profile.firstName}} {{profile.lastName}}</h1>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="flex flex-col items-center mt-14 space-y-8">
+            <!-- Profile Picture -->
+            <img 
+                src="/uploads/users/{{profile.profilePicture}}" 
+                alt="Profile Picture" 
+                class="w-[150px] h-[150px] bg-gray-300 rounded-full object-cover"
+            />
+
+            <!-- Profile Information -->
+            <div class="grid grid-cols-2 gap-6 w-[500px]">
+                <!-- Full Name -->
+                <div class="flex flex-col items-center mx-10">
+                    <span class="text-gray-600 font-medium text-lg">Username</span>
+                    <div class="bg-gray-100 rounded-lg p-5 text-center text-lg">
+                        {{profile.username}}
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="flex flex-col items-center mx-10">
+                    <span class="text-gray-600 font-medium text-lg">Email</span>
+                    <div class="bg-gray-100 rounded-lg p-5 text-center text-lg">
+                        {{profile.email}}
+                    </div>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="flex flex-col items-center mx-10">
+                    <span class="text-gray-600 font-medium text-lg">Phone Number</span>
+                    <div class="bg-gray-100 rounded-lg p-5 text-center text-lg">
+                        {{profile.number}}
+                    </div>
+                </div>
+
+                <!-- Bio -->
+                <div class="flex flex-col items-center mx-10">
+                    <span class="text-gray-600 font-medium text-lg">Bio</span>
+                    <div class="bg-gray-100 rounded-lg p-5 text-center text-lg">
+                        {{profile.bio}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Button -->
+            {{#if edit}}
+                <div class="flex flex-row ">
+                    <button id="editModeButton" class="bg-purple-500 text-white font-medium px-8 py-3 rounded-lg text-lg mx-5">
+                        EDIT
+                    </button>
+                    <a href="/users" class="bg-gray-200 text-gray-700 font-medium px-8 py-3 rounded-lg text-lg hover:bg-gray-300 transition duration-200 mx-5">
+                        BACK
+                    </a>
+                </div>
+            {{else}}
+                <a href="/users" class="bg-gray-200 text-gray-700 font-medium px-8 py-3 rounded-lg text-lg hover:bg-gray-300 transition duration-200">
+                    BACK
+                </a>
+            {{/if}}
+
+            
+        </div>
+
+    </div>
+    {{!-- edit portion --}}
+    <div id="editProfile" class="hidden flex-1 w-full h-full flex flex-col">
+        <!-- Header -->
+        <div class="w-full relative h-[91px] border-b-2 justify-center bg-white border-gray-300 flex rounded-tl-[45px] items-center">
+            <h1 class="font-bold text-[25px] inter">Edit Profile</h1>
+        </div>
+
+        <!-- Editable Profile Section -->
+        <form id="editProfileForm" action="/update-user" method="POST" enctype="multipart/form-data" class="flex flex-col items-center mt-15 space-y-8">
+            
+            <input type="hidden" name="editUserId" id="editUserId" data-id="{{profile._id}}"/>
+
+            <!-- Profile Picture -->
+            <div class="flex flex-col items-center relative mt-6">
+                <!-- Container for the image and the input -->
+                <div class="relative flex items-center justify-center">
+                    <input type="file" id="profilePicture" name="profilePicture" accept="image/*" class="hidden"/>
+                    <label for="profilePicture" class="cursor-pointer bg-gray-100 w-[175px] h-[175px] rounded-full shadow-inner border border-gray-200 flex items-center justify-center overflow-hidden">
+                        <span alt="Current Profile Picture" class="pl-[2px] text-gray-500 text-s">Upload Image</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Profile Information -->
+            <div class="grid grid-cols-3 gap-5 w-[1000px]">
+                <div class="grid grid-cols-3 gap-6 w-[1000px]">
+                    <!-- Username -->
+                    <div class="flex flex-col items-center mx-10">
+                        <label class="text-gray-600 font-medium text-lg" for="username">Username</label>
+                        <input required type="text" id="username" name="username" value="{{profile.username}}" class="bg-gray-100 rounded-lg p-3 text-center text-lg w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        />
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="flex flex-col items-center mx-10">
+                    <label class="text-gray-600 font-medium text-lg" for="email">Email</label>
+                    <input 
+                        required
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        value="{{profile.email}}" 
+                        class="bg-gray-100 rounded-lg p-3 text-center text-lg w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                </div>
+
+                <!-- Phone Number -->
+                <div class="flex flex-col items-center mx-10">
+                    <label class="text-gray-600 font-medium text-lg" for="number">Phone Number</label>
+                    <input 
+                        required
+                        type="tel" 
+                        id="number" 
+                        name="number" 
+                        value="{{profile.number}}" 
+                        class="bg-gray-100 rounded-lg p-3 text-center text-lg w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                </div>
+
+                <!-- Bio -->
+                <div class="flex flex-col items-center mx-10">
+                    <label class="text-gray-600 font-medium text-lg" for="bio">Bio</label>
+                    <input 
+                        required
+                        type="text" 
+                        id="bio" 
+                        name="bio" 
+                        value="{{profile.bio}}" 
+                        class="bg-gray-100 rounded-lg p-3 text-center text-lg w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                </div>
+
+                <!-- First Name -->
+                <div class="flex flex-col items-center mx-10">
+                    <label class="text-gray-600 font-medium text-lg" for="firstname">First Name</label>
+                    <input 
+                        required
+                        type="text" 
+                        id="firstname" 
+                        name="firstname" 
+                        value="{{profile.firstName}}" 
+                        class="bg-gray-100 rounded-lg p-3 text-center text-lg w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                </div>
+
+                <!-- Last Name -->
+                <div class="flex flex-col items-center mx-10">
+                    <label class="text-gray-600 font-medium text-lg" for="lastname">Last Name</label>
+                    <input 
+                        required
+                        type="text" 
+                        id="lastname" 
+                        name="lastname" 
+                        value="{{profile.lastName}}" 
+                        class="bg-gray-100 rounded-lg p-3 text-center text-lg w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                </div>
+
+                <!-- Password -->
+                <div class="flex flex-col items-center mx-10">
+                    <label class="text-gray-600 font-medium text-lg" for="password">Password</label>
+                    <input 
+                        required
+                        readonly
+                        type="password" 
+                        id="password" 
+                        name="password"
+                        value="{{profile.password}}"
+                        class="bg-gray-100 rounded-lg p-3 text-center text-lg w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
+                    />
+                </div>
+            </div>
+
+
+            <!-- Action Buttons -->
+            <div class="flex flex-row ">
+                <button id="submitEdit" type="submit" class="bg-purple-500 text-white font-medium px-8 py-3 rounded-lg text-lg mx-5">
+                    SAVE
+                </button>
+                <button id="cancelEdit" class="bg-gray-200 text-gray-700 font-medium px-8 py-3 rounded-lg text-lg hover:bg-gray-300 transition duration-200 mx-5">
+                    CANCEL
+                </button>
+                <!-- Delete User Button -->
+                <button id="deleteUserBtn" type="button" class="bg-red-500 text-white font-medium px-8 py-3 rounded-lg text-lg mx-5">
+                    DELETE ACCOUNT
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!--Edit Password-->
+    <div id="editPasswordModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-[#F5B0B0] w-[350px] h-auto rounded-2xl p-[25px]">
+
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-[20px] text-[#F6F296] font-extrabold">Change Password</h2>
+                <button id="closeEditPasswordModal" class="text-[20px] text-gray-600 hover:text-gray-900">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="flex flex-col items-center justify-center space-y-4">
+                <!-- Collection Details -->
+                <div class="flex flex-col space-y-4 w-full max-w-[350px]">
+                    <!--Enter Old Password-->
+                    <div class="relative">
+                        <input value='' type="password" name="oldPassword" required id="oldPassword" placeholder="Enter Old Password" class="w-full p-2 border border-gray-300 rounded-lg pr-10">
+                        <button type="button"  class="absolute inset-y-0 right-2 flex items-center text-gray-500">
+                            <span id="toggleIconOldPassword">👁️</span>
+                        </button>
+                    </div>
+                     <!--Enter New Password-->
+                    <div class="relative">
+                        <input value='' type="password" name="newPassword" required id="newPassword" placeholder="Enter New Password" class="w-full p-2 border border-gray-300 rounded-lg pr-10">
+                        <button type="button"  class="absolute inset-y-0 right-2 flex items-center text-gray-500">
+                            <span id="toggleIconNewPassword">👁️</span>
+                        </button>
+                    </div>
+                     <!--Enter New Password Final-->
+                    <div class="relative">
+                        <input value='' type="password" name="newPasswordFinal" required id="newPasswordFinal" placeholder="Re-enter New Password" class="w-full p-2 border border-gray-300 rounded-lg pr-10">
+                        <button type="button"  class="absolute inset-y-0 right-2 flex items-center text-gray-500">
+                            <span id="toggleIconNewPasswordFinal">👁️</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-center mt-8">
+                <button id="changePasswordButton" class="bg-[#F5B0B0] text-black w-[260px] py-3 font-semibold rounded-full bg-[#F6F296] transition-all duration-300">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/scripts/viewprofilePage.js"></script>
+<script>
+    const all_usernames = {{{json usernames}}};
+    
+</script>
+

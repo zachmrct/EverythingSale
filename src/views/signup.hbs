@@ -1,0 +1,58 @@
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+  <!-- Main container -->
+  <div class="relative flex items-center justify-center w-full h-full bg-white">
+    <!-- Left side text -->
+    <div class="h-screen flex-1 bg-purple-500 text-white flex items-center justify-center">
+      <h1 class="text-9xl font-extrabold uppercase text-left leading-tight pr-5">
+        Your<br>
+        Style,<br>
+        Your<br>
+        Brands,
+      </h1>
+    </div>
+
+    <!-- Right side text -->
+    <div class="h-screen flex-1 bg-white text-red-400 flex items-center justify-center">
+      <h1 class="text-9xl font-extrabold uppercase text-right leading-tight">
+        One<br>
+        Place,<br>
+        Everyth<br>
+        ing Sale
+      </h1>
+    </div>
+
+    <!-- Centered Login Form -->
+    <div class="absolute inset-0 flex items-center justify-center">
+      <div class="bg-yellow-200 rounded-lg shadow-lg p-8 w-80 text-center relative">
+        <!-- Centered Image at the Top -->
+        <img src="/uploads/everythingsale.jpg" class="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-white rounded-full">
+        <h2 class="text-pink-500 text-lg font-semibold mb-6">EVERYTHING SALE PH</h2>
+        <!--User Sign Up Modal-->
+        <form id="signUpForm" action="/signup" method="post">
+          <input type="text" id="firstname" name="firstname" required placeholder="First name" class="w-full p-2 mb-4 border border-gray-300 rounded-lg">
+          <input type="text" id="lastname" name="lastname" required placeholder="Last name" class="w-full p-2 mb-4 border border-gray-300 rounded-lg">
+          <input type="text" id="email" name="email" required placeholder="Email" class="w-full p-2 mb-4 border border-gray-300 rounded-lg">
+          <input type="text" id="number" name="number" required placeholder="Mobile Number" class="w-full p-2 mb-4 border border-gray-300 rounded-lg" pattern="^09\d{9}$">
+          <input type="text" id="username" name="username" required placeholder="Username" class="w-full p-2 mb-4 border border-gray-300 rounded-lg">
+          <div class="relative mb-6">
+            <input type="password" name="password" required id="password" placeholder="Password" class="w-full p-2 border border-gray-300 rounded-lg pr-10">
+            <button type="button"  class="absolute inset-y-0 right-2 flex items-center text-gray-500">
+              <span id="toggleIcon">👁️</span>
+            </button>
+          </div>
+          <button id="signUp" type="submit" class="w-full bg-pink-400 text-white font-bold py-2 rounded-lg">Sign Up</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Log in Button -->
+    <a href="/login" class="absolute top-4 right-4 bg-pink-200 text-pink-600 font-bold py-2 px-4 rounded-lg hover:bg-pink-300">Log in</a>
+  </div>
+
+  <div id="usernames-container" data-usernames='{{{usernames}}}'></div>
+</body>
+
+<script src="/scripts/signup.js"></script>
+<script>
+  const usernames = {{{json usernames}}};
+</script>

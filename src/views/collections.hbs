@@ -1,0 +1,161 @@
+{{> newnavbar}}
+<div class="z-10 bg-white w-full h-full rounded-tl-[45px] rounded-bl-[45px]"> <!--always set z index to 10-->
+    <div class="flex-1 w-full h-full flex flex-col">
+    <div class="w-full h-[91px] border-b-2 border-gray-300 space-x-[30px] flex" id="categoryMenu">
+        <div class="w-[200px] category-item flex items-center justify-center active" data-category="All">
+            <strong class="inter font-[700] text-[25px]">All</strong>
+        </div>
+        <div class="w-[200px] category-item flex items-center justify-center" data-category="women">
+            <strong class="inter font-[700] text-[25px]">Women</strong>
+        </div>
+        <div class="w-[200px] category-item flex items-center justify-center" data-category="men">
+            <strong class="inter font-[700] text-[25px]">Men</strong>
+        </div>
+        <div class="w-[200px] category-item flex items-center justify-center" data-category="children">
+            <strong class="inter font-[700] text-[25px]">Children</strong>
+        </div>
+        <div class="w-[200px] category-item flex items-center justify-center" data-category="other">
+            <strong class="inter font-[700] text-[25px]">Other</strong>
+        </div>
+    </div>
+    
+    <div class="flex-1 w-full h-full p-[75px] overflow-auto mb-10">
+        <!-- Container for the collection cards -->
+        <div class="w-full h-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {{#each collections}}
+                <div id="container{{this._id}}" class="collection-item-container bg-white h-[310px] w-[350px] rounded-xl border relative border-gray-300 shadow-md duration-100 hover:scale-105 collection-item" data-name="{{this.name}}"data-category="{{this.category}}" data-id="{{this._id}}">
+                    <div class="absolute top-2 right-2">
+                        <button id="dropdown{{this._id}}"class="focus:outline-none hover:bg-slate-200 rounded dropdown-toggle" data-id="{{this._id}}">
+                            <i class="bi bi-three-dots-vertical text-gray-400"></i> 
+                        </button>
+                        <div data-id="dropdown-menu{{this._id}}" class="dropdown-menu absolute right-0 mt-2 w-20 h-auto bg-white rounded-lg shadow-lg hidden">
+                            <ul class="py-1 text-gray-700">
+                                <li>
+                                    <button id="editButton{{this._id}}" class="block px-2 py-1 hover:bg-gray-100 edit-button" data-id="{{this._id}}" data-name="{{this.name}}" data-category="{{this.category}}" data-picture="{{this.collectionPicture}}">Edit</button>
+                                </li>
+                                <li>
+                                    <button id="deleteButton{{this._id}}" class="block px-2 py-1 hover:bg-gray-100 delete-button" data-id="{{this._id}}" data-name="{{this.name}}" data-picture="{{this.collectionPicture}}">Delete</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="w-full h-[250px] flex items-center justify-center border-b border-gray-200 ">
+                        <img class="text-gray-400 h-full w-auto object-contain rounded-t-xl h-full w-full object-cover" src="../uploads/collections/{{this.collectionPicture}}" alt="{{this.collectionPicture}}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div class="text-gray-400 text-center" style="display: none;">{{this.collectionPicture}}</div>
+                    </div>
+                    <div class="p-7 flex justify-between items-center border-t border-gray-300 h-[40px]">
+                        <strong class="text-black">{{this.name}}</strong>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <!-- Add collection Modal Trigger Button -->
+    <button id="openModalBtn" class="fixed bottom-[30px] right-[30px] bg-[#897198] text-white rounded-full w-[60px] h-[60px] flex items-center justify-center shadow-lg hover:bg-gray-400 hover:text-black duration-300 active:bg-black active:text-white">
+        <i class="bi bi-plus text-[30px]"></i>
+    </button>
+
+    <!-- Add Collection Modal (hidden by default) -->
+    <form action="/add-collection" method="POST" id="collectionModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 hidden" enctype="multipart/form-data">
+        <div class="bg-[#F6F296] w-[350px] h-auto rounded-2xl p-[25px] relative shadow-2xl">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-[20px] text-[#F5B0B0] font-extrabold">Add New Collection</h2>
+                <button id="closeModalBtn" class="text-[24px] text-gray-600 hover:text-gray-900">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="flex flex-col items-center justify-center space-y-4">
+                <!-- Image Upload -->
+                <input id="imageInput" type="file" name="imagePath" accept="image/*" class="hidden"/>
+                <label for="imageInput" class="cursor-pointer bg-gray-100 w-[230px] h-[180px] rounded-xl shadow-inner border border-gray-200 flex items-center justify-center">
+                    <span id="addCollectionImagePlaceholder" class="pl-[2px] text-gray-500 text-xs">Click to Upload Image</span>
+                </label>
+
+                <!-- Collection Details -->
+                <div class="flex flex-col space-y-4 w-full max-w-[350px]">
+                    <input id="newCollectionName" name="newCollectionName" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" type="text" placeholder="Collection Name" required>
+                    <select id="newCollectionCategory" name="newCollectionCategory" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" required>
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="men">Men</option>
+                        <option value="women">Women</option>
+                        <option value="children">Children</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-center mt-8">
+                <button type="submit" id="addModalSubmitBtn" class="bg-[#F5B0B0] text-[#F6F296] w-[260px] py-3 font-semibold rounded-full hover:bg-yellow-500 transition-all duration-300">
+                    Submit Collection
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-50">
+    <div class="bg-[#fffacc] p-10 rounded-lg w-[500px] m-5">
+        <h2 class="text-xl font-bold mb-4">Edit Collection</h2>
+        <!-- Edit Form -->
+        <form action="/edit-collection" method="POST" id="editForm" class="flex flex-row" enctype="multipart/form-data">
+            <div class="m-4">
+                <input id="editCollectionPicture" type="file" name="editCollectionPicture" accept="image/*" class="hidden" />
+                <label for="editCollectionPicture" class="cursor-pointer bg-gray-100 w-[230px] h-[180px] rounded-xl shadow-inner border border-gray-200 flex items-center justify-center">
+                    <span id="editCollectionImagePlaceholder" class="pl-[2px] text-gray-500 text-xs">Click to Upload Image</span>
+                </label>
+            </div>
+
+            <div class="flex flex-col">
+                <div class="mb-2">
+                    <label for="editCollectionName" class="block text-gray-700">Name</label>
+                    <input type="hidden" name="editCollectionId" id="editCollectionId" />
+                    <input type="text" id="editCollectionName" name="editCollectionName" class="w-full border border-gray-300 rounded p-2">
+                </div>
+                <div class="mb-2">
+                    <select id="editCollectionCategory" name="editCollectionCategory" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full">
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="men">Men</option>
+                        <option value="women">Women</option>
+                        <option value="children">Children</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="flex justify-center space-x-3">
+                    <button type="button" id="closeModalButton" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">Cancel</button>
+                    <button type="submit" id="confirmEditButton" class="bg-[#f5c1cc] text-white px-4 py-2 rounded hover:bg-[#d897a8]">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    </div>
+</div>
+
+    <!-- Delete Confirmation Modal (hidden by default) -->
+    <div id="deleteConfirmationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-[#F5B0B0] w-[450px] h-[450px] rounded-xl p-[20px] relative shadow-lg flex flex-col justify-between">
+            <button id="cancelDeleteBtn" class="duration-300 text-xl py-1 px-1 rounded hover:bg-gray-400 absolute top-4 right-4">
+                <i class="bi bi-x"></i> <!-- Ensure you have the 'bootstrap-icons' font loaded if you're using 'bi-x' -->
+            </button>
+            <p class="m-3 text-xl font-bold text-[#F6F296] text-center">ARE YOU SURE YOU WANT TO DELETE THIS COLLECTION?</p>
+
+            <div id="deleteItem" class="bg-white w-[250px] h-[225px] rounded-xl mx-auto border border-gray-300 shadow-md">
+                <div class="w-full h-[150px] flex items-center justify-center border-b border-gray-200">
+                    <img src="" alt="" id="delete-picture" class="rounded-t-xl">
+                </div>
+                <div class="p-3 flex justify-center items-center border-t border-gray-300 h-[50px]">
+                    <strong id="deleteItemName" class="text-black">Collection Name</strong>
+                </div>
+            </div>
+
+            <button id="confirmDeleteBtn" class="bg-[#F6F296] text-[#F5B0B0] py-2 px-4 w-40 mx-auto rounded">Delete</button>
+        </div>
+    </div>
+</div>
+<script src="/scripts/collectionPage.js"></script>
+
+

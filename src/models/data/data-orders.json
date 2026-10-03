@@ -1,0 +1,40 @@
+[
+    {
+        "_id": "6651ead6a17e4939441ea328",
+        "customer":"Lance",
+        "orderNumber":1,
+        "status":"Pending",
+        "totalPrice":3395.00,
+        "address": "Makati",
+        "email": "lance_colorina@dlsu.edu.ph",
+        "contact":12345678901,
+        "orderDate":"2024-11-13T00:00:00.000Z",
+        "items":[
+            {
+            "productId":"6651ead6a17e4939441ea32a",
+            "stockNumber":1
+            }
+        ]
+    },
+    {
+        "_id": "6651ead6a17e4939441ea327",
+        "customer":"Test",
+        "orderNumber":2,
+        "status":"Paid",
+        "totalPrice":6790.00,
+        "address": "Makati",
+        "email": "lance_colorina@dlsu.edu.ph",
+        "contact":12345678901,
+        "orderDate":"2024-11-11T00:00:00.000Z",
+        "items":[
+            {
+                "productId":"6651ead6a17e4939441ea32b",
+                "stockNumber":1
+            },
+            {
+                "productId":"6651ead6a17e4939441ea32a",
+                "stockNumber":1
+            }
+        ]
+    }
+]
